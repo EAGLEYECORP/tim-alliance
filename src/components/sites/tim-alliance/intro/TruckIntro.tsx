@@ -92,8 +92,9 @@ export function TruckIntro() {
         let flashed = false;
         const loop = (now: number) => {
           const t = (now - start) / 1000;
-          scene.render(t);
-          if (!flashed && t >= scene.impactAt - 0.03) {
+          const gap = scene.render(t);
+          // Impact: flash once the grille is about a metre from the lens.
+          if (!flashed && (gap < 1.1 || t >= scene.impactAt)) {
             flashed = true;
             setPhase("flash");
             later(runOutro, 380);

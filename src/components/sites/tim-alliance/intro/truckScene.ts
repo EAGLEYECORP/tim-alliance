@@ -10,8 +10,8 @@ const ORANGE = 0xf94006;
 const INK = 0x0d0a09;
 
 export type TruckScene = {
-  /** Advances the scene to `t` seconds of the drive-in timeline. */
-  render: (t: number) => void;
+  /** Advances the scene to `t` seconds of the drive-in timeline; returns metres left between truck and lens. */
+  render: (t: number) => number;
   resize: (w: number, h: number) => void;
   dispose: () => void;
   /** Seconds until the truck front reaches the camera. */
@@ -134,8 +134,8 @@ function buildTruck(logo: HTMLImageElement, tagline: HTMLImageElement | null) {
   const truck = new THREE.Group();
   const white = new THREE.MeshPhysicalMaterial({ color: 0xd9d7d5, metalness: 0.1, roughness: 0.38, clearcoat: 0.4, clearcoatRoughness: 0.25, envMapIntensity: 0.45 });
   const dark = new THREE.MeshStandardMaterial({ color: 0x1b1918, metalness: 0.4, roughness: 0.55 });
-  const chrome = new THREE.MeshStandardMaterial({ color: 0xd9d9d9, metalness: 1, roughness: 0.18 });
-  const glass = new THREE.MeshStandardMaterial({ color: 0x030405, metalness: 0.7, roughness: 0.12, envMapIntensity: 0.35 });
+  const chrome = new THREE.MeshStandardMaterial({ color: 0xbdbdbd, metalness: 1, roughness: 0.3, envMapIntensity: 0.5 });
+  const glass = new THREE.MeshStandardMaterial({ color: 0x030405, metalness: 0.6, roughness: 0.22, envMapIntensity: 0.06 });
   const rubber = new THREE.MeshStandardMaterial({ color: 0x0c0c0c, roughness: 0.9 });
   const orange = new THREE.MeshStandardMaterial({ color: ORANGE, emissive: ORANGE, emissiveIntensity: 0.35, roughness: 0.4 });
 
@@ -156,15 +156,29 @@ function buildTruck(logo: HTMLImageElement, tagline: HTMLImageElement | null) {
   visor.position.set(0, 3.62, 0.06);
   truck.add(visor);
 
-  // Grille with chrome slats.
+  // Grille with dark satin slats so the emblem reads on top.
+  const slatMat = new THREE.MeshStandardMaterial({ color: 0x3a3836, metalness: 0.8, roughness: 0.35, envMapIntensity: 0.4 });
   const grille = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.95, 0.06), dark);
   grille.position.set(0, 1.85, 0.03);
   truck.add(grille);
   for (let i = 0; i < 5; i++) {
-    const slat = new THREE.Mesh(new THREE.BoxGeometry(1.62, 0.05, 0.05), chrome);
+    const slat = new THREE.Mesh(new THREE.BoxGeometry(1.62, 0.05, 0.05), slatMat);
     slat.position.set(0, 1.5 + i * 0.18, 0.08);
     truck.add(slat);
   }
+  // Logo emblem on the grille: the last thing you see before impact.
+  const emblemTex = new THREE.Texture(logo);
+  emblemTex.colorSpace = THREE.SRGBColorSpace;
+  emblemTex.anisotropy = 8;
+  emblemTex.needsUpdate = true;
+  const emblemH = 0.78;
+  const emblem = new THREE.Mesh(
+    new THREE.PlaneGeometry((logo.width / logo.height) * emblemH, emblemH),
+    new THREE.MeshStandardMaterial({ map: emblemTex, transparent: true, roughness: 0.3, metalness: 0.2, emissive: 0xffffff, emissiveMap: emblemTex, emissiveIntensity: 0.45 }),
+  );
+  emblem.position.set(0, 1.86, 0.13);
+  truck.add(emblem);
+
   // Brand line under the grille.
   const line = new THREE.Mesh(new THREE.BoxGeometry(2.46, 0.06, 0.04), orange);
   line.position.set(0, 1.28, 0.05);
@@ -371,11 +385,14 @@ export async function createTruckScene(canvas: HTMLCanvasElement, assetBase: str
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
 
-  const START_Z = -95;
-  const END_Z = 10.2;
-  const impactAt = 3.4;
+  // Camera sits in the truck's lane at z = 16; the front reaches it at impactAt.
+  const CAM_Z = 16;
+  const START_Z = -62;
+  const END_Z = CAM_Z - 0.35;
+  const impactAt = 3.3;
   // Steady approach that accelerates hard in the last third.
-  const easeIn = (x: number) => x * 0.55 + Math.pow(x, 4) * 0.45;
+  // Near-constant speed with a late surge: a constant-speed approach already grows hyperbolically.
+  const easeIn = (x: number) => x * 0.8 + Math.pow(x, 2) * 0.2;
 
   const render = (t: number) => {
     const p = Math.min(1, Math.max(0, t / impactAt));
@@ -384,17 +401,22 @@ export async function createTruckScene(canvas: HTMLCanvasElement, assetBase: str
     truck.position.y = Math.sin(t * 13) * 0.012 * p;
     for (const w of wheels) w.rotation.x -= 0.25 + p * 0.6;
 
-    // Low, slightly off-axis camera; drifts toward the truck's line and shakes near impact.
-    const shake = Math.pow(p, 6) * 0.06;
-    camera.position.set(2.4 - p * 1.4 + (Math.random() - 0.5) * shake, 1.2 + p * 0.9 + (Math.random() - 0.5) * shake, 16);
-    camera.lookAt(0, 2.1 + p * 0.5, Math.min(z, 4) - 4);
-    camera.fov = 34 + Math.pow(p, 4) * 22;
+    // Dead centre of the lane at road level: the truck comes straight at you.
+    // Ground rumble builds into a hard shake; the lens widens (dolly zoom) so the cab looms.
+    const shake = Math.pow(p, 3) * 0.14;
+    const rumble = Math.sin(t * 47) * Math.pow(p, 2) * 0.02;
+    camera.position.set((Math.random() - 0.5) * shake * 0.7, 1.15 + rumble + (Math.random() - 0.5) * shake, CAM_Z);
+    camera.lookAt(0, 1.75 + Math.pow(p, 4) * 0.25, -40);
+    camera.rotateZ((Math.random() - 0.5) * shake * 0.12);
+    // Telephoto start so it looms from the first second; widens in the final metres.
+    camera.fov = 17 + Math.pow(p, 5) * 43;
     camera.updateProjectionMatrix();
 
-    const flare = 1.1 + Math.pow(p, 16) * 3.5;
-    for (const g of glows) g.scale.setScalar(flare);
-    bloom.strength = 0.45 + Math.pow(p, 16) * 0.9;
+    for (const g of glows) g.scale.setScalar(1.1);
+    // Ease the bloom off up close so the grille and emblem stay readable.
+    bloom.strength = 0.5 - Math.pow(p, 6) * 0.3;
     composer.render();
+    return CAM_Z - z;
   };
 
   const resize = (w: number, h: number) => {
