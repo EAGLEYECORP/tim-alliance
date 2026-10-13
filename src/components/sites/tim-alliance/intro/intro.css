@@ -1,0 +1,246 @@
+/* 3D truck intro overlay. Hidden unless the head script marked the page as playing. */
+
+.ta-intro {
+  display: none;
+}
+
+html[data-intro="playing"] {
+  overflow: hidden;
+}
+
+html[data-intro="playing"] .ta-intro {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: auto;
+}
+
+/* Hold the hero entrance until the curtain lifts. */
+html[data-intro="playing"] .ta-char,
+html[data-intro="playing"] .ta-hero__sub,
+html[data-intro="playing"] .ta-hero-anim {
+  animation-play-state: paused;
+}
+
+.ta-intro__curtain {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50.5%;
+  background: #0d0a09;
+  transition: transform 1s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.ta-intro__curtain--top {
+  top: 0;
+}
+
+.ta-intro__curtain--bottom {
+  bottom: 0;
+}
+
+.ta-intro__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0;
+  animation: ta-intro-fade 0.9s 0.1s ease forwards;
+}
+
+.ta-intro__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 50% 55%, transparent 55%, rgba(0, 0, 0, 0.7) 100%),
+    linear-gradient(180deg, rgba(13, 10, 9, 0.35) 0%, transparent 20%, transparent 80%, rgba(13, 10, 9, 0.45) 100%);
+}
+
+.ta-intro__flash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle at 50% 55%, #fffaf2 0%, #ffd2ad 35%, #f94006 75%, #ae2d04 100%);
+}
+
+.ta-intro__lockup {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ta-intro__logo {
+  width: min(420px, 70vw);
+  height: auto;
+  transform: scale(1.12);
+  filter: drop-shadow(0 20px 60px rgba(249, 64, 6, 0.35));
+}
+
+.ta-intro__rule {
+  display: block;
+  width: min(320px, 56vw);
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #f94006, transparent);
+  transform: scaleX(0);
+}
+
+.ta-intro__claim {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 14px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  font-weight: 600;
+  opacity: 0;
+}
+
+.ta-intro__skip {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  z-index: 2;
+  padding: 10px 18px;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(13, 10, 9, 0.35);
+  backdrop-filter: blur(10px);
+  color: rgba(255, 255, 255, 0.85);
+  font: inherit;
+  font-family: var(--font-urbanist), sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    opacity 0.3s ease;
+}
+
+.ta-intro__skip:hover,
+.ta-intro__skip:focus-visible {
+  background: #f94006;
+  border-color: #f94006;
+  color: #fff;
+}
+
+/* --- Phases --- */
+
+.ta-intro--flash .ta-intro__flash {
+  animation: ta-intro-flash 0.6s ease-out forwards;
+}
+
+.ta-intro--lockup .ta-intro__canvas,
+.ta-intro--reveal .ta-intro__canvas {
+  opacity: 0;
+  animation: none;
+}
+
+.ta-intro--lockup .ta-intro__flash {
+  opacity: 1;
+  animation: ta-intro-flash-out 0.7s ease-out forwards;
+}
+
+.ta-intro--lockup .ta-intro__lockup {
+  opacity: 1;
+}
+
+.ta-intro--lockup .ta-intro__logo {
+  animation: ta-intro-logo 1.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.ta-intro--lockup .ta-intro__rule {
+  animation: ta-intro-rule 0.9s 0.25s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.ta-intro--lockup .ta-intro__claim {
+  animation: ta-intro-fade 0.8s 0.4s ease forwards;
+}
+
+.ta-intro--reveal {
+  pointer-events: none !important;
+}
+
+.ta-intro--reveal .ta-intro__curtain--top {
+  transform: translateY(-101%);
+}
+
+.ta-intro--reveal .ta-intro__curtain--bottom {
+  transform: translateY(101%);
+}
+
+.ta-intro--reveal .ta-intro__lockup {
+  opacity: 1;
+  transition: opacity 0.45s ease;
+}
+
+.ta-intro--reveal .ta-intro__lockup,
+.ta-intro--reveal .ta-intro__skip,
+.ta-intro--reveal .ta-intro__vignette {
+  opacity: 0;
+}
+
+.ta-intro--reveal .ta-intro__flash {
+  display: none;
+}
+
+@keyframes ta-intro-fade {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ta-intro-flash {
+  0% {
+    opacity: 0;
+  }
+  45% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes ta-intro-flash-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes ta-intro-logo {
+  0% {
+    transform: scale(1.18);
+    opacity: 0;
+    filter: blur(10px) drop-shadow(0 20px 60px rgba(249, 64, 6, 0.35));
+  }
+  40% {
+    opacity: 1;
+    filter: blur(0) drop-shadow(0 20px 60px rgba(249, 64, 6, 0.35));
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    filter: blur(0) drop-shadow(0 20px 60px rgba(249, 64, 6, 0.35));
+  }
+}
+
+@keyframes ta-intro-rule {
+  to {
+    transform: scaleX(1);
+  }
+}

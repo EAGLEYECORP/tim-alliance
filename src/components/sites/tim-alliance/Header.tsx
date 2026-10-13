@@ -13,6 +13,23 @@ const nav = [
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
+
+  // Compact glass bar once past the hero top; tucks away while scrolling down, returns on scroll up.
+  useEffect(() => {
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 60);
+      setHidden(y > 700 && y > last + 2);
+      if (y < last - 2 || y <= 700) setHidden(false);
+      last = y;
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     document.documentElement.style.overflow = open ? "hidden" : "";
@@ -22,10 +39,10 @@ export function Header() {
   }, [open]);
 
   return (
-    <header className="ta-header">
+    <header className={cn("ta-header", scrolled && "is-scrolled", hidden && !open && "is-hidden")}>
       <a href={links.home} className="ta-header__logo" aria-label="TIM ALLIANCE – Accueil">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={`${ASSET}/images/logo-header.png`} alt="TIM ALLIANCE – Transport International Maroc" />
+        <img src={`${ASSET}/images/logo-header.webp`} alt="TIM ALLIANCE – Transport International Maroc" />
       </a>
 
       <div className="ta-header__brand">
@@ -33,7 +50,7 @@ export function Header() {
           TIM ALLIANCE
         </a>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={`${ASSET}/images/tagline.png`} alt="Transport International Maroc" />
+        <img src={`${ASSET}/images/tagline.webp`} alt="Transport International Maroc" />
       </div>
 
       <nav className="ta-header__nav" aria-label="Navigation principale">
@@ -61,7 +78,7 @@ export function Header() {
         <div className="ta-menu__top">
           <a href={links.home} className="ta-menu__logo" tabIndex={open ? 0 : -1}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`${ASSET}/images/logo-menu.png`} alt="TIM ALLIANCE" />
+            <img src={`${ASSET}/images/logo-menu.webp`} alt="TIM ALLIANCE" />
           </a>
           <button
             type="button"

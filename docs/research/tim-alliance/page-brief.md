@@ -70,3 +70,13 @@ Not downloaded: `assets/NrIoij0Y7PWsp35L3koQ1KcLMM.mp4` (alternate truck cut) an
 ## Comparison evidence
 
 `docs/design-references/tim-alliance/compare-desktop-1440.jpg` and `compare-phone-390.jpg` (source left, clone right). The source header does not appear in its full-page capture (see `source-desktop-1440-top.jpg` for it), and source videos show their posters because headless Chromium cannot decode H.264.
+
+## Redesign pass (after the 1:1 clone)
+
+The homepage moved past pixel-matching into a premium redesign on the same DA (logo, orange `#f94006`, ink `#1c1817`, Urbanist). The 1:1 clone is preserved in git history (commit `881eaea`).
+
+- **3D intro** (`intro/TruckIntro.tsx`, `intro/truckScene.ts`): three.js scene, lazy-loaded. A procedurally modelled white cab-over truck (black visor with the logo, branded trailer, headlights with bloom) drives toward the camera on a night road under an orange horizon, then flash → logo lockup → curtain reveal. Plays once per browser session (`sessionStorage`), skipped for `prefers-reduced-motion`, falls back to the logo lockup without WebGL, "Passer l'intro" button + Esc. `?intro=1` forces a replay; `?introDebug=<s>` (dev only) freezes a frame.
+- **Page**: fixed glass header that compacts and hides on scroll-down, Lenis smooth scroll + progress bar, cinematic hero (Ken Burns, grain, CTA pair, glass facts strip), card-based certifications, dark key-figures section, two-row logo marquee (grayscale → colour on hover), numbered trust/reason cards, oversized CTA band.
+- **New copy** written for the redesign: section headings "Des normes strictes, à chaque kilomètre.", "Ils nous confient leurs marchandises.", "Parlons de votre projet", button labels "Découvrir nos services" / "Demander mon devis", badge "Notre flotte sur la route", hero facts "25+ Pays desservis" (from "plus de 25 pays") and "Maroc · Europe · Afrique".
+- **Images**: originals re-fetched at full resolution; hero posters, truck poster, EU flag and small logos (TST, Aircelle, Stelia, CEVA) upscaled ×4 with Real-ESRGAN (x4plus); everything converted to WebP, logos trimmed of padding. Hero video: 858px → 1920px via Lanczos + denoise + sharpen (not AI upscaled).
+- Unnamed SVG partners identified: DB Schenker, Safran Sagem, Pilatus.

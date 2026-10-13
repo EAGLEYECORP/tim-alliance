@@ -47,23 +47,23 @@ export const certifications = [
   },
 ];
 
-/** Logo ticker items in source order; `box` is the square frame the logo is contained in. */
+/** Logo marquee items in source order; `h` is the rendered height so mixed aspect ratios read evenly. */
 export const partners = [
-  { src: "safran.png", alt: "Safran", box: 339 },
-  { src: "mecachrome.png", alt: "Mecachrome", box: 435 },
-  { src: "stelia.png", alt: "Stelia Aerospace", box: 365 },
-  { src: "airbus.png", alt: "Airbus", box: 304 },
-  { src: "partner-68cGU.svg", alt: "Partenaire", box: 304 },
-  { src: "partner-gOImP.svg", alt: "Partenaire", box: 304 },
-  { src: "aircelle.png", alt: "Aircelle – Groupe Safran", box: 304 },
-  { src: "ceva.png", alt: "CEVA Logistics", box: 304 },
-  { src: "partner-7nU1s.svg", alt: "Partenaire", box: 440 },
-  { src: "daher.png", alt: "Daher", box: 361 },
-  { src: "ziegler.png", alt: "Ziegler", box: 272 },
-  { src: "dachser.png", alt: "Dachser", box: 251 },
-  { src: "tst.png", alt: "TST", box: 235 },
-  { src: "stellantis.png", alt: "Stellantis", box: 630 },
-  { src: "renault.png", alt: "Renault", box: 304 },
+  { src: "safran.webp", alt: "Safran", h: 40 },
+  { src: "mecachrome.webp", alt: "Mecachrome", h: 44 },
+  { src: "stelia.webp", alt: "Stelia Aerospace", h: 40 },
+  { src: "airbus.webp", alt: "Airbus", h: 64 },
+  { src: "pilatus.svg", alt: "Pilatus", h: 34 },
+  { src: "safran-sagem.svg", alt: "Safran Sagem", h: 50 },
+  { src: "aircelle.webp", alt: "Aircelle – Groupe Safran", h: 44 },
+  { src: "ceva.webp", alt: "CEVA Logistics", h: 42 },
+  { src: "db-schenker.svg", alt: "DB Schenker", h: 36 },
+  { src: "daher.webp", alt: "Daher", h: 34 },
+  { src: "ziegler.webp", alt: "Ziegler", h: 32 },
+  { src: "dachser.webp", alt: "Dachser", h: 48 },
+  { src: "tst.webp", alt: "TST – Transit Service Transport", h: 48 },
+  { src: "stellantis.webp", alt: "Stellantis", h: 34 },
+  { src: "renault.webp", alt: "Renault", h: 64 },
 ];
 
 export const trustCards = [
