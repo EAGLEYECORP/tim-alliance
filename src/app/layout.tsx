@@ -1,20 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const urbanist = localFont({
+  variable: "--font-urbanist",
+  display: "swap",
+  src: [
+    { path: "../../public/sites/tim-alliance/fonts/urbanist-400.woff2", weight: "400", style: "normal" },
+    { path: "../../public/sites/tim-alliance/fonts/urbanist-500.woff2", weight: "500", style: "normal" },
+    { path: "../../public/sites/tim-alliance/fonts/urbanist-600.woff2", weight: "600", style: "normal" },
+    { path: "../../public/sites/tim-alliance/fonts/urbanist-700.woff2", weight: "700", style: "normal" },
+  ],
 });
 
 export const metadata: Metadata = {
-  title: "Website Clone",
-  description: "Pixel-perfect website clone",
+  title: "TIM ALLIANCE – Votre partenaire logistique de confiance depuis 2005",
+  description:
+    "TIM ALLIANCE : 20 ans d'expertise en logistique et transport intermodal au Maroc, Europe. Livraisons à temps, suivi GPS, solutions sur mesure. Contactez-nous !",
 };
 
 export default function RootLayout({
@@ -23,11 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="fr" className={`${urbanist.variable} antialiased`}>
+      <body>{children}</body>
     </html>
   );
 }
