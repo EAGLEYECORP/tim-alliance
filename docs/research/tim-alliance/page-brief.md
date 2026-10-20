@@ -80,3 +80,17 @@ The homepage moved past pixel-matching into a premium redesign on the same DA (l
 - **New copy** written for the redesign: section headings "Des normes strictes, à chaque kilomètre.", "Ils nous confient leurs marchandises.", "Parlons de votre projet", button labels "Découvrir nos services" / "Demander mon devis", badge "Notre flotte sur la route", hero facts "25+ Pays desservis" (from "plus de 25 pays") and "Maroc · Europe · Afrique".
 - **Images**: originals re-fetched at full resolution; hero posters, truck poster, EU flag and small logos (TST, Aircelle, Stelia, CEVA) upscaled ×4 with Real-ESRGAN (x4plus); everything converted to WebP, logos trimmed of padding. Hero video: 858px → 1920px via Lanczos + denoise + sharpen (not AI upscaled).
 - Unnamed SVG partners identified: DB Schenker, Safran Sagem, Pilatus.
+
+## Inner pages (all cloned, no more Framer links)
+
+| Source (Framer) | Local route | Notes |
+|---|---|---|
+| `/services` | `/services/` | 6 services (sticky index, slideshow for the 2-frame GIF), sector expertise grid |
+| `/notre-flotte` | `/notre-flotte/` | Count-up figures, 7 vehicle categories on orange, GPS map with live pings |
+| `/galerie` | `/galerie/` | The 9-frame source GIF split into real photos + fleet photos, masonry + lightbox |
+| `/à-propos` | `/a-propos/` | Drone video hero, scroll-filled road timeline 2005 → 2030, certifications, partners |
+| `/contactez-nous` | `/contactez-nous/` | Same 6 fields as the source; Netlify Forms with mailto fallback; address from the privacy page |
+| `/politique-de-confidentialité` | `/politique-de-confidentialite/` | Full text, sticky table of contents with scroll-spy |
+
+Accented source URLs redirect (301) via `public/_redirects` (Netlify) and `public/.htaccess` (Apache).
+The footer GIF/video pill is replaced by `FooterTruck.tsx`: an SVG side-view TIM ALLIANCE truck (logo trailer, cab, spinning wheels, exhaust, headlight beam) driving across a rounded road pill.

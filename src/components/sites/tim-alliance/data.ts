@@ -1,16 +1,22 @@
-export const SOURCE_ORIGIN = "https://propitious-cube-434694.framer.app";
 export const ASSET = "/sites/tim-alliance";
 
-/** Pages that exist on the source but are not cloned yet; link back to the source. */
+/** Site routes. Trailing slashes match the static export (`trailingSlash: true`). */
 export const links = {
   home: "/",
-  about: `${SOURCE_ORIGIN}/à-propos`,
-  services: `${SOURCE_ORIGIN}/services`,
-  fleet: `${SOURCE_ORIGIN}/notre-flotte`,
-  gallery: `${SOURCE_ORIGIN}/galerie`,
-  contact: `${SOURCE_ORIGIN}/contactez-nous`,
-  contactQuote: `${SOURCE_ORIGIN}/contactez-nous#contacts`,
-  privacy: `${SOURCE_ORIGIN}/politique-de-confidentialité`,
+  about: "/a-propos/",
+  services: "/services/",
+  fleet: "/notre-flotte/",
+  gallery: "/galerie/",
+  contact: "/contactez-nous/",
+  contactQuote: "/contactez-nous/#contacts",
+  privacy: "/politique-de-confidentialite/",
+};
+
+export const contactInfo = {
+  email: "contact@timalliance.ma",
+  phone: "+212 522 105 724",
+  phoneMobile: "+212 522 652 951",
+  address: "Zone industrielle Lissasfa, 27/28 lot. Al Kadiria, 3° étg. bur. n° 16, 20230 Casablanca - Maroc",
 };
 
 export const certifications = [

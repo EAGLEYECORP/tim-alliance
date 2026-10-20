@@ -1,35 +1,14 @@
 /* eslint-disable @next/next/no-img-element -- static exported assets, sized in CSS */
-import { Fragment, type ReactNode } from "react";
+import { Fragment } from "react";
 import { ArrowButton } from "./ArrowButton";
 import { Counter } from "./Counter";
-import { Header } from "./Header";
 import { Reveal } from "./Reveal";
-import { SmoothScroll } from "./SmoothScroll";
-import { TruckIntro } from "./intro/TruckIntro";
+import { SiteShell } from "./SiteShell";
 import { ASSET, certifications, links, partners, reasons, trustCards } from "./data";
-import "./tim-alliance.css";
-
-/** Renders "\n" as a line break at every width. */
-function Lines({ text }: { text: string }) {
-  return text.split("\n").map((line, i) => (
-    <Fragment key={i}>
-      {i > 0 && <br />}
-      {line}
-    </Fragment>
-  ));
-}
+import { Lines, SectionHead } from "./ui";
 
 /** Source copy carries hand-placed Framer line breaks; the redesign lets text wrap naturally. */
 const flow = (text: string) => text.replace(/[\n|]/g, " ");
-
-function Tag({ children, light }: { children: ReactNode; light?: boolean }) {
-  return (
-    <p className={light ? "ta-tag ta-tag--light" : "ta-tag"}>
-      <span className="ta-tag__ring" aria-hidden />
-      {children}
-    </p>
-  );
-}
 
 /** Splits a line into per-character spans for the staggered hero entrance. */
 function AnimatedLine({ text, offset, accent = [] }: { text: string; offset: number; accent?: number[] }) {
@@ -131,17 +110,7 @@ function Hero() {
   );
 }
 
-function SectionHead({ tag, title, light, children }: { tag: string; title: ReactNode; light?: boolean; children?: ReactNode }) {
-  return (
-    <Reveal className="ta-head">
-      <Tag light={light}>{tag}</Tag>
-      <h2 className="ta-head__title">{title}</h2>
-      {children}
-    </Reveal>
-  );
-}
-
-function Certifications() {
+export function Certifications() {
   return (
     <section className="ta-section ta-certs" id="engagements" data-section="certifications">
       <SectionHead tag="Nos engagements" title={<>Des normes strictes, à chaque kilomètre.</>} />
@@ -160,7 +129,7 @@ function Certifications() {
   );
 }
 
-function Stats() {
+export function Stats() {
   return (
     <section className="ta-section ta-stats" data-section="stats">
       <div className="ta-pattern ta-pattern--light ta-stats__pattern" aria-hidden />
@@ -223,7 +192,7 @@ function LogoRow({ items, reverse }: { items: typeof partners; reverse?: boolean
   );
 }
 
-function Clients() {
+export function Clients() {
   const half = Math.ceil(partners.length / 2);
   return (
     <section className="ta-section ta-clients" data-section="clients">
@@ -325,104 +294,15 @@ function Reasons() {
   );
 }
 
-function FooterLink({ href, children }: { href: string; children: ReactNode }) {
-  return (
-    <a href={href} className="ta-footer__link">
-      <span>{children}</span>
-      <img src={`${ASSET}/icons/arrow-up-right.svg`} alt="" width={18} height={18} />
-    </a>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="ta-dark" data-section="footer">
-      <div className="ta-cta">
-        <div className="ta-pattern ta-pattern--light ta-cta__pattern" aria-hidden />
-        <div className="ta-cta__glow" aria-hidden />
-        <Reveal className="ta-cta__inner">
-          <Tag light>Parlons de votre projet</Tag>
-          <h2 className="ta-cta__title">
-            Obtenez un devis <span>personnalisé.</span>
-          </h2>
-          <ArrowButton href={links.contactQuote} label="Demander mon devis" className="ta-cta__btn" />
-        </Reveal>
-        <div className="ta-cta__road" aria-hidden>
-          <video
-            src={`${ASSET}/video/cta-ticker.mp4`}
-            poster={`${ASSET}/video/cta-ticker-poster.gif`}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-          />
-        </div>
-      </div>
-
-      <div className="ta-footer">
-        <div className="ta-footer__brand">
-          <img src={`${ASSET}/images/logo-footer.webp`} alt="TIM ALLIANCE – Transport International Maroc" />
-        </div>
-        <div className="ta-footer__cols">
-          <div className="ta-footer__col">
-            <h6>Contacts</h6>
-            <FooterLink href={links.contact}>contact@timalliance.ma</FooterLink>
-            {/* The source shows a different phone number on desktop and phone layouts. */}
-            <FooterLink href={links.contact}>
-              <span className="ta-only-wide">+212 522 105 724</span>
-              <span className="ta-only-phone">+212 522 652 951</span>
-            </FooterLink>
-          </div>
-          <div className="ta-footer__col">
-            <h6>Pages</h6>
-            <FooterLink href={links.services}>Services</FooterLink>
-            <FooterLink href={links.fleet}>Notre flotte</FooterLink>
-            <FooterLink href={links.gallery}>Galerie</FooterLink>
-          </div>
-          <div className="ta-footer__col">
-            <h6>Entreprise</h6>
-            <FooterLink href={links.about}>À propos</FooterLink>
-            <FooterLink href={links.contact}>Contactez-nous</FooterLink>
-          </div>
-        </div>
-        <div className="ta-newsletter">
-          <h6>Restez informé en vous abonnant à notre newsletter.</h6>
-          <form
-            className="ta-newsletter__form"
-            action="mailto:contact@timalliance.ma?subject=Inscription%20newsletter"
-            method="post"
-            encType="text/plain"
-          >
-            <input type="email" name="email" required placeholder="exemple@email.com" aria-label="Adresse e-mail" />
-            <ArrowButton as="button" label="S'abonner" />
-          </form>
-        </div>
-      </div>
-
-      <div className="ta-subfooter">
-        <p>TIM ALLIANCE - © Copyright 2025</p>
-        <a href={links.privacy}>Politique de confidentialité</a>
-      </div>
-    </footer>
-  );
-}
-
 export function TimAlliancePage() {
   return (
-    <div className="ta-root">
-      <TruckIntro />
-      <SmoothScroll />
-      <Header />
-      <main>
-        <Hero />
-        <Certifications />
-        <Stats />
-        <Clients />
-        <WhyUs />
-        <Reasons />
-      </main>
-      <Footer />
-    </div>
+    <SiteShell intro>
+      <Hero />
+      <Certifications />
+      <Stats />
+      <Clients />
+      <WhyUs />
+      <Reasons />
+    </SiteShell>
   );
 }

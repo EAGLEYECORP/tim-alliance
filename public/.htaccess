@@ -16,3 +16,12 @@ DirectoryIndex index.html
 
 AddType font/woff2 .woff2
 AddType image/webp .webp
+
+# Old Framer URLs (accented slugs) -> new ASCII routes
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^%C3%A0-propos/?$ /a-propos/ [R=301,L,NE]
+  RewriteRule ^à-propos/?$ /a-propos/ [R=301,L]
+  RewriteRule ^politique-de-confidentialit%C3%A9/?$ /politique-de-confidentialite/ [R=301,L,NE]
+  RewriteRule ^politique-de-confidentialité/?$ /politique-de-confidentialite/ [R=301,L]
+</IfModule>

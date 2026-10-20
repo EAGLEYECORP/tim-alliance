@@ -1522,23 +1522,6 @@ html[data-intro="playing"] .ta-hero__media {
   margin-top: 40px;
 }
 
-.ta-cta__road {
-  position: relative;
-  margin: 72px calc(var(--ta-frame) * -1) 0;
-  height: 56px;
-  background: #0b0b0b;
-  border-block: 1px solid rgba(255, 255, 255, 0.06);
-  overflow: hidden;
-}
-
-.ta-cta__road video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 .ta-footer {
   padding: 72px var(--ta-frame) 0;
   display: grid;

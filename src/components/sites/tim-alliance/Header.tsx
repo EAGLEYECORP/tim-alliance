@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ArrowButton } from "./ArrowButton";
@@ -11,8 +12,13 @@ const nav = [
   { label: "Galerie", href: links.gallery },
 ];
 
+/** The phone menu has room for every page. */
+const navMenu = [...nav, { label: "À propos", href: links.about }, { label: "Contact", href: links.contact }];
+
 export function Header() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname() ?? "/";
+  const isActive = (href: string) => href !== "/" && pathname.replace(/\/?$/, "/").startsWith(href);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
 
@@ -55,7 +61,12 @@ export function Header() {
 
       <nav className="ta-header__nav" aria-label="Navigation principale">
         {nav.map((item) => (
-          <a key={item.label} href={item.href} className="ta-navlink">
+          <a
+            key={item.label}
+            href={item.href}
+            className={cn("ta-navlink", isActive(item.href) && "is-active")}
+            aria-current={isActive(item.href) ? "page" : undefined}
+          >
             {item.label}
           </a>
         ))}
@@ -95,8 +106,13 @@ export function Header() {
           <a href={links.about} className="ta-menu__brand" tabIndex={open ? 0 : -1}>
             TIM ALLIANCE
           </a>
-          {nav.map((item) => (
-            <a key={item.label} href={item.href} className="ta-navlink ta-navlink--dark" tabIndex={open ? 0 : -1}>
+          {navMenu.map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
+              className={cn("ta-navlink ta-navlink--dark", isActive(item.href) && "is-active")}
+              tabIndex={open ? 0 : -1}
+            >
               {item.label}
             </a>
           ))}

@@ -1,0 +1,5 @@
+# Old Framer URLs (accented slugs) -> new ASCII routes
+/%C3%A0-propos                          /a-propos/                      301
+/à-propos                               /a-propos/                      301
+/politique-de-confidentialit%C3%A9      /politique-de-confidentialite/  301
+/politique-de-confidentialité           /politique-de-confidentialite/  301

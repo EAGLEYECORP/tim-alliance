@@ -19,8 +19,9 @@ export const metadata: Metadata = {
     "TIM ALLIANCE : 20 ans d'expertise en logistique et transport intermodal au Maroc, Europe. Livraisons à temps, suivi GPS, solutions sur mesure. Contactez-nous !",
 };
 
-// Runs before first paint so the intro overlay covers the page without a flash of content.
-const introScript = `try{var d=document.documentElement;var seen=sessionStorage.getItem("ta-intro-seen");var calm=matchMedia("(prefers-reduced-motion: reduce)").matches;var force=/[?&]intro=1/.test(location.search);d.dataset.intro=(force||(!seen&&!calm))?"playing":"done";}catch(e){}`;
+// Runs before first paint so the intro overlay covers the homepage without a flash of content.
+// Only the homepage mounts the intro, so other pages must never be marked as playing.
+const introScript = `try{var d=document.documentElement;var seen=sessionStorage.getItem("ta-intro-seen");var calm=matchMedia("(prefers-reduced-motion: reduce)").matches;var force=/[?&]intro=1/.test(location.search);var p=location.pathname;var home=p==="/"||p==="/index.html";d.dataset.intro=home&&(force||(!seen&&!calm))?"playing":"done";}catch(e){}`;
 
 export default function RootLayout({
   children,
