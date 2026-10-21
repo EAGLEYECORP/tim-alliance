@@ -14,9 +14,10 @@ export const links = {
 
 export const contactInfo = {
   email: "contact@timalliance.ma",
+  // Confirmed by the Google Business listing (05 22 10 57 24, Lot 27/28 Lotissement Kadiria).
   phone: "+212 522 105 724",
-  phoneMobile: "+212 522 652 951",
   address: "Zone industrielle Lissasfa, 27/28 lot. Al Kadiria, 3° étg. bur. n° 16, 20230 Casablanca - Maroc",
+  mapsQuery: "TIM ALLIANCE, Lot 27/28 Lotissement Kadiria, Casablanca 20230",
 };
 
 export const certifications = [

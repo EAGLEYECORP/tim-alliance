@@ -7,7 +7,7 @@ import { ASSET, contactInfo } from "../data";
 import { Tag } from "../ui";
 
 const IMG = `${ASSET}/pages`;
-const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contactInfo.address)}`;
+const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contactInfo.mapsQuery)}`;
 
 export function ContactPage() {
   return (

@@ -42,13 +42,7 @@ export function Footer() {
           <div className="ta-footer__col">
             <h6>Contacts</h6>
             <FooterLink href={`mailto:${contactInfo.email}`}>{contactInfo.email}</FooterLink>
-            {/* The source shows a different phone number on desktop and phone layouts. */}
-            <FooterLink href={`tel:${contactInfo.phone.replace(/\s/g, "")}`} className="ta-only-wide">
-              {contactInfo.phone}
-            </FooterLink>
-            <FooterLink href={`tel:${contactInfo.phoneMobile.replace(/\s/g, "")}`} className="ta-only-phone">
-              {contactInfo.phoneMobile}
-            </FooterLink>
+            <FooterLink href={`tel:${contactInfo.phone.replace(/\s/g, "")}`}>{contactInfo.phone}</FooterLink>
           </div>
           <div className="ta-footer__col">
             <h6>Pages</h6>

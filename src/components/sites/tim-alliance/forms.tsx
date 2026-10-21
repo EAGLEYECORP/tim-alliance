@@ -4,41 +4,46 @@ import { useState, type FormEvent } from "react";
 import { ArrowButton } from "./ArrowButton";
 import { contactInfo } from "./data";
 
-type Status = "idle" | "sending" | "sent" | "fallback";
+type Status = "idle" | "sending" | "sent" | "fallback" | "error";
+
+const errorText: Record<string, string> = {
+  email: "Adresse e-mail invalide.",
+  name: "Merci d'indiquer votre nom.",
+  too_fast: "Un message vient d'être envoyé, merci de patienter quelques secondes.",
+};
 
 /**
- * Posts the form to Netlify Forms (detected at deploy time from the static HTML).
- * On any other host the POST fails, so we fall back to a prefilled e-mail instead of losing the message.
+ * Sends the form to /contact.php (PHP mail on the hosting), which e-mails contact@timalliance.ma.
+ * If the script is unreachable (host without PHP, network error), falls back to a prefilled e-mail.
  */
-async function submitForm(form: HTMLFormElement, subject: string): Promise<Status> {
+async function submitForm(form: HTMLFormElement, subject: string): Promise<{ status: Status; error?: string }> {
   const data = new FormData(form);
-  const body = new URLSearchParams();
-  data.forEach((v, k) => body.append(k, String(v)));
   try {
-    const res = await fetch("/", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: body.toString(),
-    });
-    if (res.ok) return "sent";
+    const res = await fetch("/contact.php", { method: "POST", body: new URLSearchParams(data as unknown as Record<string, string>) });
+    const json = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
+    if (json?.ok) return { status: "sent" };
+    if (json?.error && errorText[json.error]) return { status: "error", error: errorText[json.error] };
   } catch {
-    /* network or host without form handling: use the e-mail fallback */
+    /* script unreachable: use the e-mail fallback */
   }
   const lines: string[] = [];
   data.forEach((v, k) => {
     if (!["form-name", "bot-field"].includes(k) && String(v).trim()) lines.push(`${k} : ${v}`);
   });
   window.location.href = `mailto:${contactInfo.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`;
-  return "fallback";
+  return { status: "fallback" };
 }
 
 export function NewsletterForm() {
   const [status, setStatus] = useState<Status>("idle");
+  const [error, setError] = useState<string>();
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("sending");
-    setStatus(await submitForm(e.currentTarget, "Inscription newsletter"));
+    const r = await submitForm(e.currentTarget, "Inscription newsletter");
+    setStatus(r.status);
+    setError(r.error);
   };
 
   if (status === "sent") {
@@ -50,8 +55,7 @@ export function NewsletterForm() {
       className="ta-newsletter__form"
       name="newsletter"
       method="POST"
-      data-netlify="true"
-      netlify-honeypot="bot-field"
+      action="/contact.php"
       onSubmit={onSubmit}
     >
       <input type="hidden" name="form-name" value="newsletter" />
@@ -62,6 +66,7 @@ export function NewsletterForm() {
       </p>
       <input type="email" name="email" required placeholder="exemple@email.com" aria-label="Adresse e-mail" />
       <ArrowButton as="button" label={status === "sending" ? "Envoi…" : "S'abonner"} />
+      {error && <p className="ta-form-error">{error}</p>}
     </form>
   );
 }
@@ -70,12 +75,15 @@ const subjects = ["Demander un devis", "Planifier une réunion", "Demande géné
 
 export function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
+  const [error, setError] = useState<string>();
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("sending");
     const subject = (new FormData(e.currentTarget).get("sujet") as string) || "Demande de contact";
-    setStatus(await submitForm(e.currentTarget, `Site web – ${subject}`));
+    const r = await submitForm(e.currentTarget, `Site web – ${subject}`);
+    setStatus(r.status);
+    setError(r.error);
   };
 
   if (status === "sent") {
@@ -95,8 +103,7 @@ export function ContactForm() {
       className="ta-contact-form"
       name="contact"
       method="POST"
-      data-netlify="true"
-      netlify-honeypot="bot-field"
+      action="/contact.php"
       onSubmit={onSubmit}
     >
       <input type="hidden" name="form-name" value="contact" />
@@ -152,6 +159,7 @@ export function ContactForm() {
         <ArrowButton as="button" label={status === "sending" ? "Envoi…" : "Envoyer un message"} />
         <p>Nous vous répondrons sous 24h.</p>
       </div>
+      {error && <p className="ta-form-error">{error}</p>}
       {status === "fallback" && (
         <p className="ta-form-note">
           Votre messagerie s&apos;est ouverte avec le message prérempli. Vous pouvez aussi nous écrire à {contactInfo.email}.
